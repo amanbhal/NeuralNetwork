@@ -15,6 +15,7 @@ public class NeuralNetwork {
         this.numOfNeuronsInInputLayer = numOfNeuronsInInputLayer;
         this.numOfNeuronsInOutputLayer = numOfNeuronsInOutputLayer;
         this.networkLayers = new ArrayList<NeuronLayer>();
+        buildNeuralNetwork();
     }
 
     public void buildNeuralNetwork(){
@@ -25,14 +26,16 @@ public class NeuralNetwork {
         else{
             inputLayer = new NeuronLayer(this.numOfNeuronsInInputLayer,this.numOfNeuronsInInputLayer);
         }
-        networkLayers.add(inputLayer);
+        this.networkLayers.add(inputLayer);
         for(int i=0; i<this.numberOfHiddenLayers-1; i++){
             NeuronLayer hiddenLayer = new NeuronLayer(this.numOfNeuronsInInputLayer,this.numOfNeuronsInInputLayer);
-            networkLayers.add(hiddenLayer);
+            this.networkLayers.add(hiddenLayer);
         }
-        NeuronLayer hiddenLayer = new NeuronLayer(this.numOfNeuronsInInputLayer,this.numOfNeuronsInOutputLayer);
-        networkLayers.add(hiddenLayer);
-        NeuronLayer outputLayer = new NeuronLayer(this.numOfNeuronsInInputLayer,-1);
-        networkLayers.add(outputLayer);
+        if(this.numberOfHiddenLayers!=0){
+            NeuronLayer hiddenLayer = new NeuronLayer(this.numOfNeuronsInInputLayer,this.numOfNeuronsInOutputLayer);
+            this.networkLayers.add(hiddenLayer);
+        }
+        NeuronLayer outputLayer = new NeuronLayer(this.numOfNeuronsInOutputLayer,1);
+        this.networkLayers.add(outputLayer);
     }
 }

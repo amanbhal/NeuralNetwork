@@ -1,0 +1,12 @@
+number_of_input_nodes=10
+number_of_output_nodes=2
+
+no_of_attributes=4
+is_discrete=true,true,true,true,true
+target_index=4
+
+index0=sunny,overcast,rain
+index1=hot,mild,cool
+index2=high,normal
+index3=strong,weak
+index4=yes,no
