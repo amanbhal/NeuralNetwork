@@ -25,7 +25,7 @@ public class NeuralNetworkTrainer {
 
     public NeuralNetwork train(){
         int numOfInputNeurons = this.neuralNetwork.numOfNeuronsInInputLayer;
-        for(int i=0; i<500; i++){
+        for(int i=0; i<3000; i++){
             for(int j=0; j<this.numOfInstances; j++){
                 Matrix in = this.input.get(j);
                 Matrix out = this.expectedOutput.get(j);

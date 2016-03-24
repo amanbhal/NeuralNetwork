@@ -10,12 +10,6 @@ public class Main {
         String controlFile = "C:/Users/amanb/OneDrive/Documents/TAMU/Spring 2016/Machine Learning/Project 2 (Neural Network)/Data/irisControl.txt";
         String dataFile = "C:/Users/amanb/OneDrive/Documents/TAMU/Spring 2016/Machine Learning/Project 2 (Neural Network)/Data/iris.txt";
         properties = Parser.loadControlFile(controlFile);
-        List<Boolean> is_Discrete = new ArrayList<Boolean>();
-        String[] isDiscrete = properties.getProperty("is_discrete").split(",");
-        for(String each: isDiscrete){
-            is_Discrete.add(new Boolean(each));
-        }
-
         List<List<List<Double>>> dataList = Parser.loadExampleData(dataFile, properties);
 
         List<List<Double>> inputList = dataList.get(0);     //input list of training data
