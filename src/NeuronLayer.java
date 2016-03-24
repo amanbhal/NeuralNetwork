@@ -1,11 +1,14 @@
 import Jama.Matrix;
 
+import java.io.Serializable;
+
 /**
  * Created by amanb on 3/21/2016.
  */
 
 
-public class NeuronLayer {
+public class NeuronLayer implements Serializable {
+    private static final long serialVersionUID = 4526472641452109247L;
     public int numberOfNeurons;
     public int numberOfNeuronsInNextLayer;
 

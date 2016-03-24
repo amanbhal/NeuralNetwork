@@ -24,7 +24,6 @@ public class Test {
             Matrix expected = this.output.get(j);
             this.neuralNetwork = frontProp(in);
             Matrix out = this.neuralNetwork.networkLayers.get(this.neuralNetwork.networkLayers.size()-1).activationVector;
-            out = out.getMatrix(1,out.getRowDimension()-1,0,0);
             correct += matches(out,expected);
         }
         return ((double)correct/(double)input.size())*100;
@@ -44,7 +43,7 @@ public class Test {
     }
 
     public int matches(Matrix output, Matrix expected){
-        //output = output.getMatrix(1,output.getRowDimension()-1,0,output.getColumnDimension()-1);
+        output = output.getMatrix(1,output.getRowDimension()-1,0,output.getColumnDimension()-1);
         double maxVal = Double.MIN_VALUE;
         double maxIndexA = -1;
 

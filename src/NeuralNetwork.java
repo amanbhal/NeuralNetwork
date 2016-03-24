@@ -3,8 +3,10 @@
  */
 import Jama.Matrix;
 
+import java.io.*;
 import java.util.*;
-public class NeuralNetwork {
+public class NeuralNetwork implements Serializable {
+    private static final long serialVersionUID = 4526472615622109247L;
     int numberOfHiddenLayers;
     int numOfNeuronsInInputLayer;
     int numOfNeuronsInOutputLayer;
@@ -37,5 +39,21 @@ public class NeuralNetwork {
         }
         NeuronLayer outputLayer = new NeuronLayer(this.numOfNeuronsInOutputLayer,1);
         this.networkLayers.add(outputLayer);
+    }
+
+    public NeuralNetwork copy() throws Exception{
+        Object obj = null;
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ObjectOutputStream out = new ObjectOutputStream(bos);
+        out.writeObject(this);
+        out.flush();
+        out.close();
+
+        ObjectInputStream in = new ObjectInputStream(
+                new ByteArrayInputStream(bos.toByteArray()));
+        obj = in.readObject();
+
+        return (NeuralNetwork)obj;
+
     }
 }

@@ -6,32 +6,28 @@ import Jama.Matrix;
 import java.util.*;
 public class NeuralNetworkTrainer {
     NeuralNetwork neuralNetwork;
-    int maxNumOfIterations;
     List<Matrix> input;
     List<Matrix> expectedOutput;
     int numOfInstances;
     int numOfLayers;
-    double learningRate = 0.2;    //TODO initialize
-    double threshold;       //TODO initialize
+    double learningRate;
 
-    public NeuralNetworkTrainer(NeuralNetwork neuralNetwork, int maxNumOfIterations, List<Matrix> input, List<Matrix> expectedOutput) {
+    public NeuralNetworkTrainer(NeuralNetwork neuralNetwork, List<Matrix> input, List<Matrix> expectedOutput, double learningRate) {
         this.neuralNetwork = neuralNetwork;
-        this.maxNumOfIterations = maxNumOfIterations;
         this.input = input;
         this.expectedOutput = expectedOutput;
-        this.numOfLayers = this.neuralNetwork.networkLayers.size();
+        this.learningRate = learningRate;
         this.numOfInstances = this.input.size();
+        this.numOfLayers = this.neuralNetwork.networkLayers.size();
     }
 
     public NeuralNetwork train(){
         int numOfInputNeurons = this.neuralNetwork.numOfNeuronsInInputLayer;
-        for(int i=0; i<3000; i++){
-            for(int j=0; j<this.numOfInstances; j++){
-                Matrix in = this.input.get(j);
-                Matrix out = this.expectedOutput.get(j);
-                this.neuralNetwork = frontProp(in);
-                this.neuralNetwork = backProp(out);
-            }
+        for(int j=0; j<this.numOfInstances; j++){
+            Matrix in = this.input.get(j);
+            Matrix out = this.expectedOutput.get(j);
+            this.neuralNetwork = frontProp(in);
+            this.neuralNetwork = backProp(out);
         }
         return this.neuralNetwork;
     }
