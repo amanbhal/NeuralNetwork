@@ -10,30 +10,68 @@ public class Main {
         String controlFile = "C:/Users/amanb/OneDrive/Documents/TAMU/Spring 2016/Machine Learning/Project 2 (Neural Network)/Data/playtennisControl.txt";
         String dataFile = "C:/Users/amanb/OneDrive/Documents/TAMU/Spring 2016/Machine Learning/Project 2 (Neural Network)/Data/playtennis.txt";
         properties = Parser.loadControlFile(controlFile);
+        List<Boolean> is_Discrete = new ArrayList<Boolean>();
+        String[] isDiscrete = properties.getProperty("is_discrete").split(",");
+        for(String each: isDiscrete){
+            is_Discrete.add(new Boolean(each));
+        }
 
         List<List<List<Double>>> dataList = Parser.loadExampleData(dataFile, properties);
-        List<List<Double>> inputList = dataList.get(0);//makeInputList(dataList);
-        List<List<Double>> outputList = dataList.get(1);//makeOutputList(dataList);
+
+        List<List<Double>> inputList = dataList.get(0);     //input list of training data
+        List<List<Double>> outputList = dataList.get(1);    //output list of training data
+
+
 
         int numOfNeuronsInInputLayer = inputList.get(0).size();
         int numOfNeuronsInOutputLayer = outputList.get(0).size();
+        int numOfHiddenLayers = 2;
+        NeuralNetwork neuralNetwork = new NeuralNetwork(numOfHiddenLayers,numOfNeuronsInInputLayer,numOfNeuronsInOutputLayer);
 
-        NeuralNetwork neuralNetwork = new NeuralNetwork(0,numOfNeuronsInInputLayer,numOfNeuronsInOutputLayer);
-
+        //convert inputList to Matrix input
         List<Matrix> input = new ArrayList<Matrix>();
-        for(int i=0; i<inputList.size(); i++){
-            Matrix a = new Matrix(numOfNeuronsInInputLayer,1);
-            for(int j=0; j<inputList.get(i).size(); j++)
-                a.set(j,0,inputList.get(i).get(j));
-            input.add(a);
-        }
+        convertListToMatrix(inputList,input);
+
+        //convert outputList to Matrix expectedOutput
         List<Matrix> expectedOutput = new ArrayList<Matrix>();
-        for(int i=0; i<outputList.size(); i++){
-            Matrix a = new Matrix(numOfNeuronsInOutputLayer,1);
-            for(int j=0; j<outputList.get(i).size(); j++)
-                a.set(j,0,outputList.get(i).get(j));
-            expectedOutput.add(a);
-        }
+        convertListToMatrix(outputList,expectedOutput);
         NeuralNetworkTrainer trainer = new NeuralNetworkTrainer(neuralNetwork,5000,input,expectedOutput);
+        trainer.train();
+
+        Test tester = new Test(input,expectedOutput,neuralNetwork);
+        double accuracy = tester.run();
+        System.out.println("Accuracy is "+accuracy);
+
+    }
+
+    private static void convertListToMatrix(List<List<Double>> list, List<Matrix> matrix){
+        int numOfNeurons = list.get(0).size();
+        for(int i=0; i<list.size(); i++){
+            Matrix a = new Matrix(numOfNeurons,1);
+            for(int j=0; j<list.get(i).size(); j++)
+                a.set(j,0,list.get(i).get(j));
+            matrix.add(a);
+        }
+    }
+
+    private static void getTrainingAndValidationList(List<List<List<Double>>> dataList, List<List<List<Double>>> trainingDataList, List<List<List<Double>>> testingDataList) {
+        int length = dataList.size();
+        int twoThird = (2*length)/3;
+        for(int i=0; i<length; i++){
+            if(i<twoThird){
+                trainingDataList.add(dataList.get(i));
+            }
+            else{
+                testingDataList.add(dataList.get(i));
+            }
+        }
+    }
+
+    private static void randomize(List<List<List<Double>>> dataList) {
+        int length = dataList.size();
+        for(int i=0; i<length; i++){
+            int newPos = (int)(Math.random()*length);
+            Collections.swap(dataList,i,newPos);
+        }
     }
 }

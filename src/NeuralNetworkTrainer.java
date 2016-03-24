@@ -23,35 +23,19 @@ public class NeuralNetworkTrainer {
         this.numOfInstances = this.input.size();
     }
 
-    public NeuralNetwork trainer(){
-        double errorValue = Double.MAX_VALUE;
-        while(errorValue>threshold){
-            Matrix error = new Matrix(this.neuralNetwork.numOfNeuronsInOutputLayer,1);
-            for(int i=0; i<this.numOfInstances; i++){
-                Matrix inputVector = this.input.get(i);
-                Matrix expectedOutputVector = this.expectedOutput.get(i);
-                this.neuralNetwork = frontProp(inputVector);
-                if(i==this.numOfInstances-1){
-                    NeuronLayer outputLayer = this.neuralNetwork.networkLayers.get(this.numOfLayers-1);
-                    error = outputLayer.activationVector.minus(expectedOutputVector);
-                }
-                this.neuralNetwork = backProp(expectedOutputVector);
-            }
-            int numOfNeuronsInOutputLayer = this.neuralNetwork.numOfNeuronsInOutputLayer;
-            //TODO calculation of error
-            for(int i=0; i<numOfNeuronsInOutputLayer; i++){
-                errorValue += error.get(i,0);
-            }
-            if(errorValue<this.threshold){
-                break;
+    public NeuralNetwork train(){
+        int numOfInputNeurons = this.neuralNetwork.numOfNeuronsInInputLayer;
+        for(int i=0; i<500; i++){
+            for(int j=0; j<this.numOfInstances; j++){
+                Matrix in = this.input.get(j);
+                Matrix out = this.expectedOutput.get(j);
+                this.neuralNetwork = frontProp(in);
+                this.neuralNetwork = backProp(out);
             }
         }
         return this.neuralNetwork;
     }
 
-    public NeuralNetwork backProp(Matrix expectedOutputVector){
-        return this.neuralNetwork;
-    }
 
     public NeuralNetwork frontProp(Matrix inputVector){
         NeuronLayer currentLayer = this.neuralNetwork.networkLayers.get(0);
@@ -65,4 +49,75 @@ public class NeuralNetworkTrainer {
         }
         return this.neuralNetwork;
     }
+
+    public NeuralNetwork backProp(Matrix expectedOutput){
+        Matrix output = new Matrix(expectedOutput.getRowDimension()+1,1);
+        output.set(0,0,1);
+        for(int i=0; i<expectedOutput.getRowDimension(); i++){
+            output.set(i+1,0,expectedOutput.get(i,0));
+        }
+        Matrix Ok = this.neuralNetwork.networkLayers.get(this.neuralNetwork.networkLayers.size()-1).activationVector;
+        Matrix I = getIdentityMatrix(Ok.getRowDimension());
+
+        NeuronLayer outputLayer = this.neuralNetwork.networkLayers.get(this.neuralNetwork.networkLayers.size()-1);
+        outputLayer.errorVector = hadamardProduct(output.minus(Ok),hadamardProduct(Ok,(I.minus(Ok))));
+
+        //back prop the error
+        for(int i=this.neuralNetwork.networkLayers.size()-2; i>=0; i--){
+            NeuronLayer currLayer = this.neuralNetwork.networkLayers.get(i);
+            NeuronLayer nextLayer = this.neuralNetwork.networkLayers.get(i+1);
+            Matrix Oj = currLayer.activationVector;
+            Matrix Wjk = currLayer.weightMatrix.transpose();
+            Matrix dk = removeFirstRow(nextLayer.errorVector);
+            I = getIdentityMatrix(Oj.getRowDimension());
+
+            Matrix a = Wjk.times(dk);
+            Matrix c = I.minus(Oj);
+
+            currLayer.errorVector = hadamardProduct(a,hadamardProduct(Oj,c));
+        }
+
+        //updating weight matrix for each layer
+        for(int i=0; i<this.neuralNetwork.networkLayers.size()-1; i++){
+            NeuronLayer currLayer = this.neuralNetwork.networkLayers.get(i);
+            NeuronLayer nextLayer = this.neuralNetwork.networkLayers.get(i+1);
+            currLayer.deltaWeightMatrix = nextLayer.errorVector.times(currLayer.activationVector.transpose()).times(this.learningRate);
+            currLayer.deltaWeightMatrix = currLayer.deltaWeightMatrix.getMatrix(1,currLayer.deltaWeightMatrix.getRowDimension()-1,0,currLayer.deltaWeightMatrix.getColumnDimension()-1);
+            currLayer.weightMatrix = currLayer.weightMatrix.plus(currLayer.deltaWeightMatrix);
+        }
+
+        return this.neuralNetwork;
+    }
+
+    private Matrix removeFirstRow(Matrix a) {
+        Matrix b = new Matrix(a.getRowDimension()-1,1);
+        for(int i=1; i<a.getRowDimension(); i++){
+            b.set(i-1,0,a.get(i,0));
+        }
+        return b;
+    }
+
+    private Matrix getIdentityMatrix(int rowDimension) {
+        Matrix I = new Matrix(rowDimension,1);
+        for(int i=0; i<rowDimension; i++){
+            I.set(i,0,1);
+        }
+        return I;
+    }
+
+    private Matrix hadamardProduct(Matrix a, Matrix b){
+        int rows =  a.getRowDimension();
+        int cols = a.getColumnDimension();
+
+        Matrix c = new Matrix(rows,cols);
+
+        for(int i=0; i<rows; i++){
+            for(int j=0; j<cols; j++){
+                c.set(i,j,a.get(i,j)*b.get(i,j));
+            }
+        }
+
+        return c;
+    }
+
 }
