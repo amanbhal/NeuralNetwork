@@ -1,0 +1,19 @@
+number_of_input_nodes=47
+number_of_output_nodes=2
+no_of_attributes=15
+
+target_index=15
+
+is_discrete = true,false,false,true,true,true,true,false,true,true,false,true,true,false,false,true
+
+
+index0= b,a
+index3=u,y,l,t
+index4=g,p,gg
+index5=c,d,cc,i,j,k,m,r,q,w,x,e,aa,ff
+index6=v,h,bb,j,n,z,dd,ff,o
+index8=t,f
+index9=t,f
+index11=t,f
+index12=g,p,s
+index15=+,-

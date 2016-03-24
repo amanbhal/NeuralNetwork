@@ -1,0 +1,17 @@
+number_of_input_nodes=27
+number_of_output_nodes=2
+
+no_of_attributes=9
+is_discrete=true,true,true,true,true,true,true,true,true,true
+target_index=9
+
+index0=x,o,b
+index1=x,o,b
+index2=x,o,b
+index3=x,o,b
+index4=x,o,b
+index5=x,o,b
+index6=x,o,b
+index7=x,o,b
+index8=x,o,b
+index9=positive,negative

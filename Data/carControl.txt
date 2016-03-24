@@ -1,0 +1,17 @@
+number_of_input_nodes=21
+number_of_output_nodes=4
+no_of_attributes=6
+
+
+is_discrete = true,true,true,true,true,true,true
+target_index=6
+
+
+
+index0=vhigh,high,med,low
+index1=vhigh,high,med,low
+index2=2,3,4,5more
+index3=2,4,more
+index4=small,med,big
+index5=low,med,high
+index6=unacc,acc,good,vgood

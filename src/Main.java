@@ -12,10 +12,21 @@ public class Main {
     static int numOfHiddenLayers;
     static double learningRate = 0.25;
     public static void main(String[] args) throws Exception{
-        // TODO int noOfHiddenLayer = args[0];
+
+//        if(args.length <3)
+//        {
+//            System.out.println("Invalid number of arguments ");
+//            System.exit(0);
+//        }
+//        controlFile = args[0];
+//        dataFile = args[1];
+//        numOfHiddenLayers = Integer.parseInt(args[2]);
+
+        controlFile = "C:/Users/amanb/OneDrive/Documents/TAMU/Spring 2016/Machine Learning/Project 2 (Neural Network)/Data/creditscreeningControl.txt";
+        dataFile = "C:/Users/amanb/OneDrive/Documents/TAMU/Spring 2016/Machine Learning/Project 2 (Neural Network)/Data/creditscreening.txt";
+        numOfHiddenLayers = 2;
+
         Parser parse = new Parser();
-        controlFile = "C:/Users/amanb/OneDrive/Documents/TAMU/Spring 2016/Machine Learning/Project 2 (Neural Network)/Data/irisControl.txt";
-        dataFile = "C:/Users/amanb/OneDrive/Documents/TAMU/Spring 2016/Machine Learning/Project 2 (Neural Network)/Data/iris.txt";
         properties = Parser.loadControlFile(controlFile);
         List<List<List<Double>>> dataList = Parser.loadExampleData(dataFile, properties);
 
@@ -25,7 +36,7 @@ public class Main {
         totalDataList = fillTotalDataList(inputList,outputList);
         numOfNeuronsInInputLayer = inputList.get(0).size();
         numOfNeuronsInOutputLayer = outputList.get(0).size();
-        numOfHiddenLayers = 2;
+
 
         int hops = totalDataList.size()/10;
         System.out.println("10 CROSS VALIDATION");
@@ -62,6 +73,11 @@ public class Main {
             List<List<Double>> mseInput = new ArrayList<List<Double>>();
             List<List<Double>> mseOutput = new ArrayList<List<Double>>();
 
+            for(int z=0; z<ValidationDataList.size(); z++){
+                mseInput.add(ValidationDataList.get(z).get(0));
+                mseOutput.add(ValidationDataList.get(z).get(1));
+            }
+
             NeuralNetwork neuralNetwork = new NeuralNetwork(numOfHiddenLayers,numOfNeuronsInInputLayer,numOfNeuronsInOutputLayer);
             NeuralNetworkTrainer trainer = new NeuralNetworkTrainer(neuralNetwork,TrainingInputMatrix,TrainingOutputMatrix,learningRate);
 
@@ -74,6 +90,8 @@ public class Main {
             NeuralNetwork bestNetwork = null;
             int limit = 100;
             int lowestMSEfoundAt = 0;
+            int count =0;
+            int totalAccuracy = 0;
             do{
                 if(mse<=lowestMSE){
                     lowestMSE = mse;
@@ -81,18 +99,18 @@ public class Main {
                     lowestMSEfoundAt = x;
                     limit = x*2;
                 }
+
+                //System.out.println("Lowest MSE found after "+ lowestMSEfoundAt + " iterations, checked further till "+limit +" iterations.");
+
+                Test tester = new Test(TestInputMatrix,TestOutputMatrix,neuralNetwork);
+                double accuracy = tester.run();
+                System.out.println("Accuracy is "+accuracy);
+
+
                 trainer.train();
                 mse = calculateMSE(neuralNetwork,mseInput,mseOutput);
                 x++;
-            }while(x<limit && x<=20000);
-
-            System.out.println("Lowest MSE found after "+ lowestMSEfoundAt + " iterations, checked further till "+limit +" iterations.");
-
-            Test tester = new Test(TestInputMatrix,TestOutputMatrix,neuralNetwork);
-            double accuracy = tester.run();
-            System.out.println("Accuracy is "+accuracy);
-
-
+            }while(x<limit && x<=200);
 
             System.out.println("Iteration ends !!\n\n");
         }

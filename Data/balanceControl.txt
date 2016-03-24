@@ -1,0 +1,13 @@
+number_of_input_nodes=20
+number_of_output_nodes=3
+no_of_attributes=4
+
+
+is_discrete = true,true,true,true,true
+target_index=0
+
+index0=L,B,R
+index1=1,2,3,4,5
+index2=1,2,3,4,5
+index3=1,2,3,4,5
+index4=1,2,3,4,5

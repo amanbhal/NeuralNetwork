@@ -58,13 +58,16 @@ public class Parser {
         try {
             br = new BufferedReader(new FileReader(dataFile));
             String line = br.readLine();
-            while (line != null) {
+            outer: while (line != null) {
 
                 List<Double> targetOutput = new ArrayList<Double>();
                 List<Double> example = new ArrayList<Double>();
                 String[] eachExample = line.split(",");
 
                 for (int i = 0; i < eachExample.length; i++) {
+                    if (eachExample[i].equals("?")) {
+                        break outer;
+                    }
                     if (targetInputIndex == i) {
                         for (int j = 0; j < attributeValueList.get(i).size(); j++) {
                             if (attributeValueList.get(i).get(j).equals(eachExample[i])) {
@@ -125,10 +128,13 @@ public class Parser {
         try {
             br = new BufferedReader(new FileReader(dataFile));
             String line = br.readLine();
-            while (line != null) {
+            outer: while (line != null) {
 
                 String[] eachExample = line.split(",");
                 for (int i = 0; i < eachExample.length; i++) {
+                    if (eachExample[i].equals("?")) {
+                        break outer;
+                    }
                     if (!isDiscreteList.get(i).equals("true")) {
                         double val = Double.parseDouble(eachExample[i]);
                         if (!minMap.containsKey(i)) {
