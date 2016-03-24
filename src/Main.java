@@ -7,8 +7,8 @@ public class Main {
     public static void main(String[] args) {
         // TODO int noOfHiddenLayer = args[0];
         Parser parse = new Parser();
-        String controlFile = "C:/Users/amanb/OneDrive/Documents/TAMU/Spring 2016/Machine Learning/Project 2 (Neural Network)/Data/playtennisControl.txt";
-        String dataFile = "C:/Users/amanb/OneDrive/Documents/TAMU/Spring 2016/Machine Learning/Project 2 (Neural Network)/Data/playtennis.txt";
+        String controlFile = "C:/Users/amanb/OneDrive/Documents/TAMU/Spring 2016/Machine Learning/Project 2 (Neural Network)/Data/irisControl.txt";
+        String dataFile = "C:/Users/amanb/OneDrive/Documents/TAMU/Spring 2016/Machine Learning/Project 2 (Neural Network)/Data/iris.txt";
         properties = Parser.loadControlFile(controlFile);
         List<Boolean> is_Discrete = new ArrayList<Boolean>();
         String[] isDiscrete = properties.getProperty("is_discrete").split(",");

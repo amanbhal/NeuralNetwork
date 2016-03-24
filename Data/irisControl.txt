@@ -1,0 +1,10 @@
+number_of_input_nodes=4
+number_of_output_nodes=3
+no_of_attributes=4
+
+target_index=4
+
+is_discrete = false,false,false,false,true
+
+
+index4=Iris-setosa,Iris-versicolor,Iris-virginica
