@@ -22,8 +22,8 @@ public class Main {
 //        dataFile = args[1];
 //        numOfHiddenLayers = Integer.parseInt(args[2]);
 
-        controlFile = "C:/Users/amanb/OneDrive/Documents/TAMU/Spring 2016/Machine Learning/Project 2 (Neural Network)/Data/creditscreeningControl.txt";
-        dataFile = "C:/Users/amanb/OneDrive/Documents/TAMU/Spring 2016/Machine Learning/Project 2 (Neural Network)/Data/creditscreening.txt";
+        controlFile = "C:/Users/amanb/OneDrive/Documents/TAMU/Spring 2016/Machine Learning/Project 2 (Neural Network)/Data/tictactoeControl.txt";
+        dataFile = "C:/Users/amanb/OneDrive/Documents/TAMU/Spring 2016/Machine Learning/Project 2 (Neural Network)/Data/tictactoe.txt";
         numOfHiddenLayers = 2;
 
         Parser parse = new Parser();
@@ -93,6 +93,7 @@ public class Main {
             int count =0;
             int totalAccuracy = 0;
             do{
+                count += 1;
                 if(mse<=lowestMSE){
                     lowestMSE = mse;
                     bestNetwork = neuralNetwork.copy();
@@ -104,14 +105,13 @@ public class Main {
 
                 Test tester = new Test(TestInputMatrix,TestOutputMatrix,neuralNetwork);
                 double accuracy = tester.run();
-                System.out.println("Accuracy is "+accuracy);
-
-
+                totalAccuracy += accuracy;
                 trainer.train();
                 mse = calculateMSE(neuralNetwork,mseInput,mseOutput);
                 x++;
             }while(x<limit && x<=200);
-
+            totalAccuracy = totalAccuracy/count;
+            System.out.println("Accuracy is "+totalAccuracy);
             System.out.println("Iteration ends !!\n\n");
         }
     }
