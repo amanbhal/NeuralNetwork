@@ -78,7 +78,8 @@ public class NeuralNetworkTrainer {
             NeuronLayer currLayer = this.neuralNetwork.networkLayers.get(i);
             NeuronLayer nextLayer = this.neuralNetwork.networkLayers.get(i+1);
             currLayer.deltaWeightMatrix = nextLayer.errorVector.times(currLayer.activationVector.transpose()).times(this.learningRate);
-            currLayer.deltaWeightMatrix = currLayer.deltaWeightMatrix.getMatrix(1,currLayer.deltaWeightMatrix.getRowDimension()-1,0,currLayer.deltaWeightMatrix.getColumnDimension()-1);
+            currLayer.deltaWeightMatrix = currLayer.deltaWeightMatrix.getMatrix(1,currLayer.deltaWeightMatrix.getRowDimension()-1,0,
+                    currLayer.deltaWeightMatrix.getColumnDimension()-1);
             currLayer.weightMatrix = currLayer.weightMatrix.plus(currLayer.deltaWeightMatrix);
         }
 

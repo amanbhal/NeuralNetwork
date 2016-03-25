@@ -10,21 +10,21 @@ public class Main {
     static int numOfNeuronsInInputLayer;
     static int numOfNeuronsInOutputLayer;
     static int numOfHiddenLayers;
-    static double learningRate = 0.25;
+    static double learningRate;
     public static void main(String[] args) throws Exception{
 
-//        if(args.length <3)
-//        {
-//            System.out.println("Invalid number of arguments ");
-//            System.exit(0);
-//        }
-//        controlFile = args[0];
-//        dataFile = args[1];
-//        numOfHiddenLayers = Integer.parseInt(args[2]);
-
-        controlFile = "C:/Users/amanb/OneDrive/Documents/TAMU/Spring 2016/Machine Learning/Project 2 (Neural Network)/Data/tictactoeControl.txt";
-        dataFile = "C:/Users/amanb/OneDrive/Documents/TAMU/Spring 2016/Machine Learning/Project 2 (Neural Network)/Data/tictactoe.txt";
-        numOfHiddenLayers = 2;
+        if(args.length <4)
+        {
+            System.out.println("Invalid number of arguments ");
+            System.exit(0);
+        }
+        controlFile = args[0];
+        dataFile = args[1];
+        numOfHiddenLayers = Integer.parseInt(args[2]);
+        learningRate = Double.parseDouble(args[3]);
+//        controlFile = "C:/Users/amanb/OneDrive/Documents/TAMU/Spring 2016/Machine Learning/Project 2 (Neural Network)/Data/balanceControl.txt";
+//        dataFile = "C:/Users/amanb/OneDrive/Documents/TAMU/Spring 2016/Machine Learning/Project 2 (Neural Network)/Data/balance.txt";
+//        numOfHiddenLayers = 1;
 
         Parser parse = new Parser();
         properties = Parser.loadControlFile(controlFile);
@@ -40,6 +40,8 @@ public class Main {
 
         int hops = totalDataList.size()/10;
         System.out.println("10 CROSS VALIDATION");
+        List<Double> accuracyPerValidation = new ArrayList<Double>();
+        List<Double> mseList = new ArrayList<Double>();
         randomize(totalDataList);
         for(int i=0; i<totalDataList.size();i+=hops){
             List<Matrix> TestInputMatrix = new ArrayList<Matrix>();
@@ -91,7 +93,8 @@ public class Main {
             int limit = 100;
             int lowestMSEfoundAt = 0;
             int count =0;
-            int totalAccuracy = 0;
+            double totalAccuracy = 0;
+            double totalMSE = 0;
             do{
                 count += 1;
                 if(mse<=lowestMSE){
@@ -102,18 +105,51 @@ public class Main {
                 }
 
                 //System.out.println("Lowest MSE found after "+ lowestMSEfoundAt + " iterations, checked further till "+limit +" iterations.");
-
+                //System.out.println("Lowest MSE "+lowestMSE);
                 Test tester = new Test(TestInputMatrix,TestOutputMatrix,neuralNetwork);
                 double accuracy = tester.run();
                 totalAccuracy += accuracy;
                 trainer.train();
                 mse = calculateMSE(neuralNetwork,mseInput,mseOutput);
+                totalMSE += mse;
                 x++;
-            }while(x<limit && x<=200);
+            }while(x<limit && x<=300);
+            totalMSE = totalMSE/count;
+            mseList.add(totalMSE);
             totalAccuracy = totalAccuracy/count;
+            accuracyPerValidation.add(totalAccuracy);
             System.out.println("Accuracy is "+totalAccuracy);
             System.out.println("Iteration ends !!\n\n");
         }
+        int noOfIterations = 0;
+        if(accuracyPerValidation.size()>=10){
+            noOfIterations = 10;
+        }
+        else
+            noOfIterations = accuracyPerValidation.size();
+        double summationOfAccuracy = 0.0;
+        for(int i=0; i<noOfIterations; i++){
+            summationOfAccuracy += accuracyPerValidation.get(i);
+        }
+        double mean = summationOfAccuracy/noOfIterations;
+        double sumOfSquare = 0.0;
+        for(int i=0; i<noOfIterations; i++){
+            sumOfSquare += Math.pow(accuracyPerValidation.get(i)-mean,2);
+        }
+        double standardDeviation = Math.sqrt(sumOfSquare/noOfIterations);
+        double standardError = standardDeviation/Math.sqrt(noOfIterations);
+        double CI_low = mean-2.23*standardError;
+        double CI_high = mean+2.23*standardError;
+        double sumError = 0.0;
+        for(int i=0; i<noOfIterations;i++){
+            sumError += mseList.get(i);
+        }
+        sumError = sumError/noOfIterations;
+
+        System.out.println("-------------SUMMARY---------------");
+        System.out.println("Mean Accuracy: "+ mean);
+        System.out.println("MSE "+sumError);
+        System.out.println(String.format("Confidence Interval: [%.4f, %.4f]", CI_low,CI_high));
     }
 
     private static double calculateMSE(NeuralNetwork neuralNetwork, List<List<Double>> mseInput, List<List<Double>> mseOutput) {
